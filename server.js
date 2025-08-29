@@ -8,6 +8,8 @@ const cors = require('cors');
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
 const userRoutes = require('./routes/user');
+const eventsRoutes = require('./routes/events');
+const adminEventsRoutes = require('./routes/admin-events');
 
 // Middleware
 app.use(cors());
@@ -18,6 +20,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/events', eventsRoutes);
+app.use('/api/admin/events', adminEventsRoutes);
 
 // Health check route
 app.get('/health', (req, res) => {

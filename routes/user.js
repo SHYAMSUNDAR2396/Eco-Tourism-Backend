@@ -13,10 +13,22 @@ router.get('/dashboard', async (req, res) => {
     // Get user's own profile
     const user = await User.findById(req.user._id).select('-password');
     
-    // Get basic stats (can be expanded based on eco-tourism features)
+    // Get eco-event statistics
+    const EventRegistration = require('../models/EventRegistration');
+    const totalRegistrations = await EventRegistration.countDocuments({ user: req.user._id });
+    const activeRegistrations = await EventRegistration.countDocuments({ 
+      user: req.user._id, 
+      status: { $in: ['pending', 'confirmed'] } 
+    });
+    const completedEvents = await EventRegistration.countDocuments({ 
+      user: req.user._id, 
+      status: 'completed' 
+    });
+
     const stats = {
-      totalBookings: 0, // Placeholder for future eco-tourism bookings
-      totalTrips: 0,    // Placeholder for future eco-tourism trips
+      totalRegistrations,
+      activeRegistrations,
+      completedEvents,
       memberSince: user.createdAt
     };
 

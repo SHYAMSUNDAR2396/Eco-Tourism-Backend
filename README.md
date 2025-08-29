@@ -1,266 +1,195 @@
 # Eco-Tourism Backend
 
-A comprehensive backend system for eco-tourism management with role-based authentication and user management.
+A comprehensive backend API for eco-tourism event management, built with Node.js, Express, and MongoDB.
 
 ## Features
 
-- **User Authentication**: Signup, login, and role-based access control
-- **Role Management**: Admin and User roles with different permissions
-- **Admin Dashboard**: User management, statistics, and system overview
-- **User Dashboard**: Personal profile management and basic statistics
-- **JWT Authentication**: Secure token-based authentication
-- **MongoDB Integration**: Scalable database with Mongoose ODM
-- **Password Security**: Bcrypt hashing for secure password storage
+### User Features
 
-## Prerequisites
+- **Authentication**: Sign up, login, and profile management
+- **Home Page (Dashboard)**: Browse all eco-events with search and filtering
+- **Event Details**: View comprehensive event information and register
+- **Profile Management**: View and edit personal information
+- **Event Registration**: Register for events and manage bookings
 
-- Node.js (v14 or higher)
-- MongoDB (local or cloud instance)
-- npm or yarn package manager
+### Admin Features
 
-## Installation
-
-1. **Clone the repository**
-
-   ```bash
-   git clone <repository-url>
-   cd Eco-Tourism-Backend
-   ```
-
-2. **Install dependencies**
-
-   ```bash
-   npm install
-   ```
-
-3. **Environment Setup**
-   Create a `.env` file in the root directory with the following variables:
-
-   ```env
-   PORT=5000
-   NODE_ENV=development
-   MONGO_URI=mongodb://localhost:27017/eco-tourism
-   JWT_SECRET=your-super-secret-jwt-key-here-change-in-production
-   ```
-
-4. **Start the server**
-
-   ```bash
-   # Development mode with nodemon
-   npm run dev
-
-   # Production mode
-   npm start
-   ```
+- **Admin Dashboard**: Overview of created events and statistics
+- **Event Management**: Create, edit, and delete eco-events
+- **Progress Tracking**: Update event progress and status in real-time
+- **Registration Management**: View and manage event registrations
+- **User Management**: Manage user accounts and permissions
 
 ## API Endpoints
 
-### Authentication Routes (`/api/auth`)
+### Authentication (`/api/auth`)
 
-#### User Signup
-
-- **POST** `/api/auth/signup`
-- **Body**: `{ "name", "email", "password", "phone", "address" }`
-- **Response**: User data + JWT token
-
-#### User Login
-
-- **POST** `/api/auth/login`
-- **Body**: `{ "email", "password" }`
-- **Response**: User data + JWT token + redirect path
-
-#### Admin Signup (Protected)
-
-- **POST** `/api/auth/admin/signup`
-- **Headers**: `Authorization: Bearer <token>`
-- **Body**: `{ "name", "email", "password", "phone", "address" }`
-- **Response**: Admin user data
-
-#### Get Profile
-
-- **GET** `/api/auth/profile`
-- **Headers**: `Authorization: Bearer <token>`
-- **Response**: Current user profile
-
-#### Update Profile
-
-- **PUT** `/api/auth/profile`
-- **Headers**: `Authorization: Bearer <token>`
-- **Body**: `{ "name", "phone", "address" }`
-- **Response**: Updated user profile
-
-#### Change Password
-
-- **PUT** `/api/auth/change-password`
-- **Headers**: `Authorization: Bearer <token>`
-- **Body**: `{ "currentPassword", "newPassword" }`
-- **Response**: Success message
-
-### Admin Routes (`/api/admin`)
-
-#### Admin Dashboard
-
-- **GET** `/api/admin/dashboard`
-- **Headers**: `Authorization: Bearer <token>`
-- **Response**: System statistics and recent users
-
-#### Get All Users
-
-- **GET** `/api/admin/users?page=1&limit=10&search=&role=&status=`
-- **Headers**: `Authorization: Bearer <token>`
-- **Response**: Paginated user list with filters
-
-#### Update User Status
-
-- **PATCH** `/api/admin/users/:userId/status`
-- **Headers**: `Authorization: Bearer <token>`
-- **Body**: `{ "isActive": boolean }`
-- **Response**: Updated user data
-
-#### Delete User
-
-- **DELETE** `/api/admin/users/:userId`
-- **Headers**: `Authorization: Bearer <token>`
-- **Response**: Success message
-
-#### Get User Details
-
-- **GET** `/api/admin/users/:userId`
-- **Headers**: `Authorization: Bearer <token>`
-- **Response**: User details
+- `POST /signup` - User registration
+- `POST /login` - User login
+- `POST /logout` - User logout
 
 ### User Routes (`/api/user`)
 
-#### User Dashboard
+- `GET /dashboard` - User dashboard with eco-event statistics
+- `GET /profile` - Get user profile
+- `PUT /profile` - Update user profile
+- `PUT /change-password` - Change password
+- `PATCH /deactivate` - Deactivate account
 
-- **GET** `/api/user/dashboard`
-- **Headers**: `Authorization: Bearer <token>`
-- **Response**: User profile and basic stats
+### Events (`/api/events`)
 
-#### Get Profile
+- `GET /` - Get all active eco-events (Home Page)
+- `GET /:eventId` - Get event details
+- `POST /:eventId/register` - Register for an event
+- `DELETE /:eventId/register` - Cancel event registration
+- `GET /user/registrations` - Get user's event registrations
 
-- **GET** `/api/user/profile`
-- **Headers**: `Authorization: Bearer <token>`
-- **Response**: User profile
+### Admin Routes (`/api/admin`)
 
-#### Update Profile
+- `GET /dashboard` - Admin dashboard with user statistics
+- `GET /users` - Get all users with pagination and filters
+- `PATCH /users/:userId/status` - Update user status
+- `DELETE /users/:userId` - Delete user
+- `GET /users/:userId` - Get user details
 
-- **PUT** `/api/user/profile`
-- **Headers**: `Authorization: Bearer <token>`
-- **Body**: `{ "name", "phone", "address" }`
-- **Response**: Updated user profile
+### Admin Events (`/api/admin/events`)
 
-#### Change Password
+- `GET /dashboard` - Admin events dashboard
+- `GET /` - Get all events created by admin
+- `POST /` - Create new event
+- `GET /:eventId` - Get event details (admin view)
+- `PUT /:eventId` - Update event
+- `PATCH /:eventId/progress` - Update event progress
+- `PATCH /:eventId/status` - Update event status
+- `DELETE /:eventId` - Delete event
+- `GET /:eventId/registrations` - Get event registrations
+- `PATCH /:eventId/registrations/:registrationId` - Update registration status
 
-- **PUT** `/api/user/change-password`
-- **Headers**: `Authorization: Bearer <token>`
-- **Body**: `{ "currentPassword", "newPassword" }`
-- **Response**: Success message
+## Data Models
 
-#### Deactivate Account
+### User
 
-- **PATCH** `/api/user/deactivate`
-- **Headers**: `Authorization: Bearer <token>`
-- **Response**: Success message
+- Basic user information (name, email, password)
+- Role-based access control (user/admin)
+- Account status management
 
-## Role-Based Access Control
+### EcoEvent
 
-### Admin Role
+- Event details (title, description, category, date, location)
+- Participant management (max/current participants)
+- Progress tracking and status updates
+- Image support and organizer information
+- Category-based classification
 
-- Access to admin dashboard
-- User management (view, activate/deactivate, delete)
-- System statistics
-- Create new admin accounts
+### EventRegistration
 
-### User Role
+- User-event relationship tracking
+- Registration status and payment information
+- Special requirements and emergency contacts
+- Cancellation and refund handling
 
-- Access to user dashboard
-- Profile management
-- Basic statistics
-- Account deactivation
+## Event Categories
 
-## Authentication Flow
+- Wildlife Safari
+- Nature Trek
+- Bird Watching
+- Conservation
+- Cultural Tour
+- Adventure
+- Photography
+- Other
 
-1. **Signup/Login**: User provides credentials
-2. **Token Generation**: JWT token is generated and returned
-3. **Role Check**: System determines user role (admin/user)
-4. **Redirect**: Frontend redirects based on role:
-   - Admin → `/admin/dashboard`
-   - User → `/user/dashboard`
+## Event Statuses
+
+- `upcoming` - Event is scheduled for the future
+- `ongoing` - Event is currently happening
+- `completed` - Event has finished
+- `cancelled` - Event was cancelled
+
+## Registration Statuses
+
+- `pending` - Registration submitted, awaiting confirmation
+- `confirmed` - Registration confirmed
+- `cancelled` - Registration cancelled
+- `completed` - Event completed
+
+## Search and Filtering
+
+### Event Search
+
+- Text search across title, description, and location
+- Category-based filtering
+- Status-based filtering
+- Date-based sorting
+- Pagination support
+
+### User Management
+
+- Search users by name or email
+- Filter by role and status
+- Pagination for large user lists
 
 ## Security Features
 
-- **Password Hashing**: Bcrypt with salt rounds
-- **JWT Tokens**: Secure authentication with expiration
-- **Role Validation**: Middleware-based access control
-- **Input Validation**: Mongoose schema validation
-- **Error Handling**: Comprehensive error responses
+- JWT-based authentication
+- Password hashing with bcrypt
+- Role-based access control
+- Input validation and sanitization
+- Protected route middleware
 
-## Database Schema
+## Installation
 
-### User Model
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Set up environment variables:
+   ```
+   MONGO_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret_key
+   PORT=5000
+   ```
+4. Start the server: `npm start`
 
-```javascript
+## Environment Variables
+
+- `MONGO_URI`: MongoDB connection string
+- `JWT_SECRET`: Secret key for JWT token generation
+- `PORT`: Server port (default: 5000)
+
+## API Response Format
+
+All API responses follow a consistent format:
+
+```json
 {
-  name: String (required),
-  email: String (required, unique),
-  password: String (required, hashed),
-  role: String (enum: 'user', 'admin'),
-  phone: String,
-  address: String,
-  isActive: Boolean,
-  timestamps: true
+  "success": true/false,
+  "message": "Response message",
+  "data": {
+    // Response data
+  }
 }
 ```
 
 ## Error Handling
 
-The API returns consistent error responses:
+The API includes comprehensive error handling:
 
-```json
-{
-  "success": false,
-  "message": "Error description",
-  "error": "Detailed error message (development only)"
-}
-```
+- Validation errors for invalid input
+- Authentication errors for unauthorized access
+- Database errors with appropriate HTTP status codes
+- Global error handler for unexpected errors
 
-## Development
+## Real-time Features
 
-### Running Tests
+- Event progress updates
+- Participant count management
+- Registration status tracking
+- Event status transitions
 
-```bash
-npm test
-```
+## Future Enhancements
 
-### Code Structure
-
-```
-├── models/          # Database models
-├── routes/          # API route handlers
-├── middleware/      # Authentication and validation
-├── db/             # Database connection
-├── server.js       # Main application file
-└── package.json    # Dependencies and scripts
-```
-
-## Production Considerations
-
-1. **Environment Variables**: Use strong JWT secrets
-2. **Database**: Use MongoDB Atlas or production MongoDB instance
-3. **CORS**: Configure allowed origins
-4. **Rate Limiting**: Implement API rate limiting
-5. **Logging**: Add comprehensive logging
-6. **Monitoring**: Implement health checks and monitoring
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
-
-## License
-
-This project is licensed under the ISC License.
+- WebSocket support for real-time updates
+- File upload for event images
+- Payment gateway integration
+- Email notifications
+- Mobile app API endpoints
+- Analytics and reporting
