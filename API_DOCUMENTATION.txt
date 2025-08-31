@@ -1,0 +1,767 @@
+# Eco-Tourism API Documentation
+
+## API Endpoints Documentation
+
+### Base URL: /api
+
+---
+
+## 🔐 Authentication Routes (/api/auth)
+
+### 1. POST /api/auth/signup
+Description: User registration
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "password123",
+  "phone": "+1234567890",
+  "address": "123 Main St, City, State"
+}
+
+Response:
+{
+  "success": true,
+  "message": "User registered successfully",
+  "data": {
+    "user": {
+      "_id": "507f1f77bcf86cd799439011",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "phone": "+1234567890",
+      "address": "123 Main St, City, State",
+      "role": "user",
+      "isActive": true,
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    },
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }
+}
+
+### 2. POST /api/auth/login
+Description: User login
+{
+  "email": "john@example.com",
+  "password": "password123"
+}
+
+Response:
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "user": {
+      "_id": "507f1f77bcf86cd799439011",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "phone": "+1234567890",
+      "address": "123 Main St, City, State",
+      "role": "user",
+      "isActive": true,
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    },
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "redirectTo": "/user/dashboard"
+  }
+}
+
+### 3. POST /api/auth/admin/signup
+Description: Admin user creation (requires admin token)
+{
+  "name": "Admin User",
+  "email": "admin@example.com",
+  "password": "admin123",
+  "phone": "+1234567890",
+  "address": "456 Admin St, City, State"
+}
+
+### 4. GET /api/auth/profile
+Description: Get current user profile (requires token)
+Response:
+{
+  "success": true,
+  "data": {
+    "user": {
+      "_id": "507f1f77bcf86cd799439011",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "phone": "+1234567890",
+      "address": "123 Main St, City, State",
+      "role": "user",
+      "isActive": true,
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    }
+  }
+}
+
+### 5. PUT /api/auth/profile
+Description: Update user profile (requires token)
+{
+  "name": "John Updated",
+  "phone": "+1987654321",
+  "address": "789 New St, City, State"
+}
+
+### 6. PUT /api/auth/change-password
+Description: Change password (requires token)
+{
+  "currentPassword": "oldpassword",
+  "newPassword": "newpassword123"
+}
+
+### 7. POST /api/auth/logout
+Description: Logout (client-side token removal)
+Response:
+{
+  "success": true,
+  "message": "Logout successful"
+}
+
+---
+
+## 🎯 Events Routes (/api/events)
+
+### 1. GET /api/events
+Description: Get all active eco-events (public)
+Query Parameters:
+- page (default: 1)
+- limit (default: 12)
+- search (optional)
+- category (optional)
+- status (default: 'upcoming')
+- sortBy (default: 'date')
+- sortOrder (default: 'asc')
+
+Response:
+{
+  "success": true,
+  "data": {
+    "events": [
+      {
+        "_id": "507f1f77bcf86cd799439012",
+        "title": "Wildlife Safari Adventure",
+        "date": "2024-02-15T09:00:00.000Z",
+        "location": "Serengeti National Park",
+        "progress": 0,
+        "category": "Wildlife Safari",
+        "images": [
+          {
+            "url": "https://example.com/image1.jpg",
+            "alt": "Safari landscape"
+          }
+        ],
+        "maxParticipants": 20,
+        "currentParticipants": 15,
+        "price": 150,
+        "duration": 8,
+        "difficulty": "Moderate",
+        "status": "upcoming"
+      }
+    ],
+    "pagination": {
+      "currentPage": 1,
+      "totalPages": 5,
+      "totalEvents": 60,
+      "eventsPerPage": 12
+    },
+    "filters": {
+      "categories": ["Wildlife Safari", "Nature Trek", "Bird Watching"],
+      "search": "",
+      "category": "",
+      "status": "upcoming"
+    }
+  }
+}
+
+### 2. GET /api/events/:eventId
+Description: Get event details by ID (public)
+Response:
+{
+  "success": true,
+  "data": {
+    "event": {
+      "_id": "507f1f77bcf86cd799439012",
+      "title": "Wildlife Safari Adventure",
+      "description": "Experience the beauty of African wildlife...",
+      "category": "Wildlife Safari",
+      "date": "2024-02-15T09:00:00.000Z",
+      "location": "Serengeti National Park",
+      "coordinates": {
+        "latitude": -2.3333,
+        "longitude": 34.8333
+      },
+      "images": [
+        {
+          "url": "https://example.com/image1.jpg",
+          "alt": "Safari landscape"
+        }
+      ],
+      "maxParticipants": 20,
+      "currentParticipants": 15,
+      "price": 150,
+      "duration": 8,
+      "difficulty": "Moderate",
+      "status": "upcoming",
+      "progress": 0,
+      "requirements": ["Comfortable walking shoes", "Water bottle"],
+      "highlights": ["Lion sightings", "Sunset views"],
+      "organizer": {
+        "name": "Eco Tours Ltd",
+        "contact": "+1234567890",
+        "email": "info@ecotours.com"
+      },
+      "createdBy": {
+        "_id": "507f1f77bcf86cd799439013",
+        "name": "Admin User",
+        "email": "admin@example.com"
+      },
+      "isActive": true,
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    },
+    "userRegistration": {
+      "_id": "507f1f77bcf86cd799439014",
+      "status": "confirmed",
+      "paymentStatus": "paid",
+      "registrationDate": "2024-01-15T10:30:00.000Z"
+    }
+  }
+}
+
+### 3. POST /api/events/:eventId/register
+Description: Register for an event (requires user token)
+{
+  "specialRequirements": "Vegetarian meal required",
+  "emergencyContact": {
+    "name": "Jane Doe",
+    "phone": "+1987654321",
+    "relationship": "Spouse"
+  },
+  "paymentMethod": "credit_card"
+}
+
+Response:
+{
+  "success": true,
+  "message": "Successfully registered for event",
+  "data": {
+    "registration": {
+      "_id": "507f1f77bcf86cd799439014",
+      "user": "507f1f77bcf86cd799439011",
+      "event": "507f1f77bcf86cd799439012",
+      "status": "pending",
+      "registrationDate": "2024-01-15T10:30:00.000Z",
+      "paymentStatus": "pending",
+      "paymentAmount": 150,
+      "paymentMethod": "credit_card",
+      "specialRequirements": "Vegetarian meal required",
+      "emergencyContact": {
+        "name": "Jane Doe",
+        "phone": "+1987654321",
+        "relationship": "Spouse"
+      },
+      "createdAt": "2024-01-15T10:30:00.000Z",
+      "updatedAt": "2024-01-15T10:30:00.000Z"
+    },
+    "event": {
+      "id": "507f1f77bcf86cd799439012",
+      "title": "Wildlife Safari Adventure",
+      "currentParticipants": 16,
+      "maxParticipants": 20
+    }
+  }
+}
+
+### 4. DELETE /api/events/:eventId/register
+Description: Cancel event registration (requires user token)
+{
+  "reason": "Schedule conflict"
+}
+
+### 5. GET /api/events/user/registrations
+Description: Get user's event registrations (requires user token)
+Query Parameters:
+- status (optional)
+- page (default: 1)
+- limit (default: 10)
+
+Response:
+{
+  "success": true,
+  "data": {
+    "registrations": [
+      {
+        "_id": "507f1f77bcf86cd799439014",
+        "user": "507f1f77bcf86cd799439011",
+        "event": {
+          "_id": "507f1f77bcf86cd799439012",
+          "title": "Wildlife Safari Adventure",
+          "date": "2024-02-15T09:00:00.000Z",
+          "location": "Serengeti National Park",
+          "progress": 0,
+          "status": "upcoming",
+          "images": [
+            {
+              "url": "https://example.com/image1.jpg",
+              "alt": "Safari landscape"
+            }
+          ],
+          "category": "Wildlife Safari"
+        },
+        "status": "confirmed",
+        "registrationDate": "2024-01-15T10:30:00.000Z",
+        "paymentStatus": "paid",
+        "paymentAmount": 150,
+        "paymentMethod": "credit_card",
+        "specialRequirements": "Vegetarian meal required",
+        "emergencyContact": {
+          "name": "Jane Doe",
+          "phone": "+1987654321",
+          "relationship": "Spouse"
+        },
+        "createdAt": "2024-01-15T10:30:00.000Z",
+        "updatedAt": "2024-01-15T10:30:00.000Z"
+      }
+    ],
+    "pagination": {
+      "currentPage": 1,
+      "totalPages": 3,
+      "totalRegistrations": 25,
+      "registrationsPerPage": 10
+    }
+  }
+}
+
+---
+
+## 👤 User Routes (/api/user)
+
+### 1. GET /api/user/dashboard
+Description: Get user dashboard (requires user token)
+Response:
+{
+  "success": true,
+  "data": {
+    "user": {
+      "_id": "507f1f77bcf86cd799439011",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "phone": "+1234567890",
+      "address": "123 Main St, City, State",
+      "role": "user",
+      "isActive": true,
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    },
+    "stats": {
+      "totalRegistrations": 15,
+      "activeRegistrations": 8,
+      "completedEvents": 7,
+      "memberSince": "2024-01-01T00:00:00.000Z"
+    }
+  }
+}
+
+### 2. GET /api/user/profile
+Description: Get user profile (requires user token)
+Response:
+{
+  "success": true,
+  "data": {
+    "user": {
+      "_id": "507f1f77bcf86cd799439011",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "phone": "+1234567890",
+      "address": "123 Main St, City, State",
+      "role": "user",
+      "isActive": true,
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    }
+  }
+}
+
+### 3. PUT /api/user/profile
+Description: Update user profile (requires user token)
+{
+  "name": "John Updated",
+  "phone": "+1987654321",
+  "address": "789 New St, City, State"
+}
+
+### 4. PUT /api/user/change-password
+Description: Change user password (requires user token)
+{
+  "currentPassword": "oldpassword",
+  "newPassword": "newpassword123"
+}
+
+### 5. PATCH /api/user/deactivate
+Description: Deactivate user account (requires user token)
+Response:
+{
+  "success": true,
+  "message": "Account deactivated successfully"
+}
+
+---
+
+## 🔧 Admin Routes (/api/admin)
+
+### 1. GET /api/admin/dashboard
+Description: Get admin dashboard (requires admin token)
+Response:
+{
+  "success": true,
+  "data": {
+    "stats": {
+      "totalUsers": 150,
+      "totalAdmins": 5,
+      "activeUsers": 142,
+      "inactiveUsers": 8
+    },
+    "recentUsers": [
+      {
+        "_id": "507f1f77bcf86cd799439011",
+        "name": "John Doe",
+        "email": "john@example.com",
+        "phone": "+1234567890",
+        "address": "123 Main St, City, State",
+        "role": "user",
+        "isActive": true,
+        "createdAt": "2024-01-15T10:30:00.000Z",
+        "updatedAt": "2024-01-15T10:30:00.000Z"
+      }
+    ]
+  }
+}
+
+### 2. GET /api/admin/users
+Description: Get all users (requires admin token)
+Query Parameters:
+- page (default: 1)
+- limit (default: 10)
+- search (optional)
+- role (optional)
+- status (optional)
+
+Response:
+{
+  "success": true,
+  "data": {
+    "users": [
+      {
+        "_id": "507f1f77bcf86cd799439011",
+        "name": "John Doe",
+        "email": "john@example.com",
+        "phone": "+1234567890",
+        "address": "123 Main St, City, State",
+        "role": "user",
+        "isActive": true,
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "updatedAt": "2024-01-01T00:00:00.000Z"
+      }
+    ],
+    "pagination": {
+      "currentPage": 1,
+      "totalPages": 15,
+      "totalUsers": 150,
+      "usersPerPage": 10
+    }
+  }
+}
+
+### 3. PATCH /api/admin/users/:userId/status
+Description: Update user status (requires admin token)
+{
+  "isActive": false
+}
+
+### 4. DELETE /api/admin/users/:userId
+Description: Delete user (requires admin token)
+Response:
+{
+  "success": true,
+  "message": "User deleted successfully"
+}
+
+### 5. GET /api/admin/users/:userId
+Description: Get user details (requires admin token)
+Response:
+{
+  "success": true,
+  "data": {
+    "user": {
+      "_id": "507f1f77bcf86cd799439011",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "phone": "+1234567890",
+      "address": "123 Main St, City, State",
+      "role": "user",
+      "isActive": true,
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    }
+  }
+}
+
+---
+
+## 🎪 Admin Events Routes (/api/admin/events)
+
+### 1. GET /api/admin/events/dashboard
+Description: Get admin events dashboard (requires admin token)
+Response:
+{
+  "success": true,
+  "data": {
+    "events": [
+      {
+        "_id": "507f1f77bcf86cd799439012",
+        "title": "Wildlife Safari Adventure",
+        "status": "upcoming",
+        "progress": 0,
+        "currentParticipants": 15,
+        "maxParticipants": 20,
+        "date": "2024-02-15T09:00:00.000Z",
+        "location": "Serengeti National Park",
+        "category": "Wildlife Safari"
+      }
+    ],
+    "stats": {
+      "totalEvents": 25,
+      "activeEvents": 20,
+      "upcomingEvents": 15,
+      "totalRegistrations": 180
+    }
+  }
+}
+
+### 2. GET /api/admin/events
+Description: Get all events created by admin (requires admin token)
+Query Parameters:
+- page (default: 1)
+- limit (default: 10)
+- search (optional)
+- category (optional)
+- status (optional)
+- sortBy (default: 'createdAt')
+- sortOrder (default: 'desc')
+
+### 3. POST /api/admin/events
+Description: Create new event (requires admin token)
+{
+  "title": "Wildlife Safari Adventure",
+  "description": "Experience the beauty of African wildlife in their natural habitat",
+  "category": "Wildlife Safari",
+  "date": "2024-02-15T09:00:00.000Z",
+  "location": "Serengeti National Park",
+  "coordinates": {
+    "latitude": -2.3333,
+    "longitude": 34.8333
+  },
+  "images": [
+    {
+      "url": "https://example.com/image1.jpg",
+      "alt": "Safari landscape"
+    }
+  ],
+  "maxParticipants": 20,
+  "price": 150,
+  "duration": 8,
+  "difficulty": "Moderate",
+  "requirements": ["Comfortable walking shoes", "Water bottle"],
+  "highlights": ["Lion sightings", "Sunset views"],
+  "organizer": {
+    "name": "Eco Tours Ltd",
+    "contact": "+1234567890",
+    "email": "info@ecotours.com"
+  }
+}
+
+### 4. GET /api/admin/events/:eventId
+Description: Get event by ID (requires admin token)
+
+### 5. PUT /api/admin/events/:eventId
+Description: Update event (requires admin token)
+{
+  "title": "Updated Wildlife Safari Adventure",
+  "description": "Updated description",
+  "location": "Updated location",
+  "price": 175,
+  "duration": 10
+}
+
+### 6. PATCH /api/admin/events/:eventId/progress
+Description: Update event progress (requires admin token)
+{
+  "progress": 75
+}
+
+### 7. PATCH /api/admin/events/:eventId/status
+Description: Update event status (requires admin token)
+{
+  "status": "ongoing"
+}
+
+### 8. DELETE /api/admin/events/:eventId
+Description: Delete event (requires admin token)
+Response:
+{
+  "success": true,
+  "message": "Event deleted successfully"
+}
+
+### 9. GET /api/admin/events/:eventId/registrations
+Description: Get event registrations (requires admin token)
+Query Parameters:
+- page (default: 1)
+- limit (default: 20)
+- status (optional)
+
+Response:
+{
+  "success": true,
+  "data": {
+    "event": {
+      "id": "507f1f77bcf86cd799439012",
+      "title": "Wildlife Safari Adventure",
+      "currentParticipants": 15,
+      "maxParticipants": 20
+    },
+    "registrations": [
+      {
+        "_id": "507f1f77bcf86cd799439014",
+        "user": {
+          "_id": "507f1f77bcf86cd799439011",
+          "name": "John Doe",
+          "email": "john@example.com",
+          "phone": "+1234567890"
+        },
+        "event": "507f1f77bcf86cd799439012",
+        "status": "confirmed",
+        "registrationDate": "2024-01-15T10:30:00.000Z",
+        "paymentStatus": "paid",
+        "paymentAmount": 150,
+        "paymentMethod": "credit_card",
+        "specialRequirements": "Vegetarian meal required",
+        "emergencyContact": {
+          "name": "Jane Doe",
+          "phone": "+1987654321",
+          "relationship": "Spouse"
+        },
+        "createdAt": "2024-01-15T10:30:00.000Z",
+        "updatedAt": "2024-01-15T10:30:00.000Z"
+      }
+    ],
+    "pagination": {
+      "currentPage": 1,
+      "totalPages": 2,
+      "totalRegistrations": 15,
+      "registrationsPerPage": 20
+    }
+  }
+}
+
+### 10. PATCH /api/admin/events/:eventId/registrations/:registrationId
+Description: Update registration status (requires admin token)
+{
+  "status": "confirmed",
+  "notes": "Payment received, confirmed participation"
+}
+
+---
+
+## 🏥 Health Check
+
+### GET /health
+Description: Health check endpoint
+Response:
+{
+  "success": true,
+  "message": "Eco-Tourism Backend is running",
+  "timestamp": "2024-01-15T10:30:00.000Z"
+}
+
+---
+
+## 📊 Data Models
+
+### User Model
+{
+  "_id": "ObjectId",
+  "name": "String (required)",
+  "email": "String (required, unique)",
+  "password": "String (required, min 6 chars)",
+  "role": "String (enum: 'user', 'admin', default: 'user')",
+  "phone": "String",
+  "address": "String",
+  "isActive": "Boolean (default: true)",
+  "createdAt": "Date",
+  "updatedAt": "Date"
+}
+
+### EcoEvent Model
+{
+  "_id": "ObjectId",
+  "title": "String (required)",
+  "description": "String (required)",
+  "category": "String (enum: ['Wildlife Safari', 'Nature Trek', 'Bird Watching', 'Conservation', 'Cultural Tour', 'Adventure', 'Photography', 'Other'])",
+  "date": "Date (required)",
+  "location": "String (required)",
+  "coordinates": {
+    "latitude": "Number",
+    "longitude": "Number"
+  },
+  "images": [
+    {
+      "url": "String",
+      "alt": "String"
+    }
+  ],
+  "maxParticipants": "Number (required, min: 1)",
+  "currentParticipants": "Number (default: 0)",
+  "price": "Number (required, min: 0)",
+  "duration": "Number (required, min: 0.5)",
+  "difficulty": "String (enum: ['Easy', 'Moderate', 'Challenging', 'Expert'])",
+  "status": "String (enum: ['upcoming', 'ongoing', 'completed', 'cancelled'])",
+  "progress": "Number (min: 0, max: 100, default: 0)",
+  "requirements": ["String"],
+  "highlights": ["String"],
+  "organizer": {
+    "name": "String",
+    "contact": "String",
+    "email": "String"
+  },
+  "createdBy": "ObjectId (ref: User, required)",
+  "isActive": "Boolean (default: true)",
+  "createdAt": "Date",
+  "updatedAt": "Date"
+}
+
+### EventRegistration Model
+{
+  "_id": "ObjectId",
+  "user": "ObjectId (ref: User, required)",
+  "event": "ObjectId (ref: EcoEvent, required)",
+  "status": "String (enum: ['pending', 'confirmed', 'cancelled', 'completed'], default: 'pending')",
+  "registrationDate": "Date (default: now)",
+  "paymentStatus": "String (enum: ['pending', 'paid', 'refunded', 'failed'], default: 'pending')",
+  "paymentAmount": "Number (required)",
+  "paymentMethod": "String (enum: ['credit_card', 'debit_card', 'bank_transfer', 'cash', 'other'], default: 'other')",
+  "specialRequirements": "String",
+  "emergencyContact": {
+    "name": "String",
+    "phone": "String",
+    "relationship": "String"
+  },
+  "cancellationReason": "String",
+  "cancellationDate": "Date",
+  "refundAmount": "Number",
+  "notes": "String",
+  "createdAt": "Date",
+  "updatedAt": "Date"
+}
